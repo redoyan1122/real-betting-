@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Betting App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      width: 80%;
+      font-size: 16px;
+    }
+    #adminSection, #adminLogin, #depositList, #withdrawList {
+      display: none;
+      text-align: left;
+      margin-top: 20px;
+    }
+    small {
+      display: block;
+      margin-top: 30px;
+      cursor: pointer;
+      color: blue;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Betting Site</h2>
+
+    <h3>Place Your Bet</h3>
+    <input type="text" placeholder="Match Name" id="matchName">
+    <input type="number" placeholder="Amount" id="betAmount">
+    <button onclick="placeBet()">Place Bet</button>
+
+    <h3>Deposit</h3>
+    <input type="text" placeholder="Your Number" id="depositNumber">
+    <input type="number" placeholder="Amount" id="depositAmount">
+    <button onclick="requestDeposit()">Deposit</button>
+
+    <h3>Withdraw</h3>
+    <input type="text" placeholder="Your Number" id="withdrawNumber">
+    <input type="number" placeholder="Withdraw Amount" id="withdrawAmount">
+    <button onclick="requestWithdraw()">Withdraw</button>
+
+    <small onclick="document.getElementById('adminLogin').style.display='block'">RR</small>
+
+    <div id="adminLogin">
+      <input type="password" placeholder="Enter Admin Password" id="adminPass">
+      <button onclick="checkAdmin()">Login</button>
+    </div>
+
+    <div id="adminSection">
+      <h3>Admin Panel</h3>
+      <h4>Add Match</h4>
+      <input type="text" placeholder="Match Name" id="adminMatch">
+      <input type="number" placeholder="Winning Rate (%)" id="winningRate">
+      <button onclick="addMatch()">Add</button>
+
+      <h4>Deposit Requests</h4>
+      <ul id="depositList"></ul>
+
+      <h4>Withdraw Requests</h4>
+      <ul id="withdrawList"></ul>
+    </div>
+  </div>
+
+  <script>
+    let deposits = [];
+    let withdraws = [];
+
+    function placeBet() {
+      const match = document.getElementById('matchName').value;
+      const amount = document.getElementById('betAmount').value;
+      alert(`Bet placed on ${match} for ${amount}৳`);
+    }
+
+    function requestDeposit() {
+      const number = document.getElementById('depositNumber').value;
+      const amount = document.getElementById('depositAmount').value;
+      deposits.push({ number, amount });
+      alert('Deposit request submitted. Wait for admin approval.');
+    }
+
+    function requestWithdraw() {
+      const number = document.getElementById('withdrawNumber').value;
+      const amount = document.getElementById('withdrawAmount').value;
+      withdraws.push({ number, amount });
+      alert('Withdraw request submitted. Wait for admin approval.');
+    }
+
+    function checkAdmin() {
+      const pass = document.getElementById('adminPass').value;
+      if (pass === 'rezoan') {
+        document.getElementById('adminSection').style.display = 'block';
+        loadRequests();
+      } else {
+        alert('Wrong password');
+      }
+    }
+
+    function addMatch() {
+      const match = document.getElementById('adminMatch').value;
+      const rate = document.getElementById('winningRate').value;
+      alert(`Match ${match} added with winning rate ${rate}%`);
+    }
+
+    function loadRequests() {
+      const depositList = document.getElementById('depositList');
+      depositList.innerHTML = '';
+      deposits.forEach((d, i) => {
+        depositList.innerHTML += `<li>${d.number} - ${d.amount}৳ <button onclick="approveDeposit(${i})">Approve</button></li>`;
+      });
+
+      const withdrawList = document.getElementById('withdrawList');
+      withdrawList.innerHTML = '';
+      withdraws.forEach((w, i) => {
+        withdrawList.innerHTML += `<li>${w.number} - ${w.amount}৳ <button onclick="approveWithdraw(${i})">Approve</button></li>`;
+      });
+    }
+
+    function approveDeposit(index) {
+      alert(`Approved deposit: ${deposits[index].number} for ${deposits[index].amount}৳`);
+      deposits.splice(index, 1);
+      loadRequests();
+    }
+
+    function approveWithdraw(index) {
+      alert(`Approved withdraw: ${withdraws[index].number} for ${withdraws[index].amount}৳`);
+      withdraws.splice(index, 1);
+      loadRequests();
+    }
+  </script>
+</body>
+</html>
